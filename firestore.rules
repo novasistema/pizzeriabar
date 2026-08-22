@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Products: readable by everyone, writeable by all valid users
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Settings: readable by everyone, writeable by all valid users
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Orders: readable and writeable for order placement and status updates
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if true;
+    }
+
+    // Customers: readable and writeable for user profile and saved addresses
+    match /customers/{customerId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Tables: readable and writeable for salon waiter mode
+    match /tables/{tableId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

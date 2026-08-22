@@ -1,0 +1,130 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Pizzeria menu items including pizzas, empanadas, drinks, desserts, and combos",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "category": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "isAvailable": { "type": "boolean" },
+        "isPopular": { "type": "boolean" },
+        "isVegetarian": { "type": "boolean" },
+        "isSpicy": { "type": "boolean" },
+        "isNew": { "type": "boolean" },
+        "sizes": { "type": "array" },
+        "crusts": { "type": "array" },
+        "availableToppings": { "type": "array" },
+        "prepTimeMinutes": { "type": "number" }
+      },
+      "required": ["id", "name", "price", "category", "isAvailable"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer orders with line items, delivery details, status tracking, and payment info",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "deliveryType": { "type": "string" },
+        "deliveryAddress": { "type": "object" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "deliveryFee": { "type": "number" },
+        "discount": { "type": "number" },
+        "discountCode": { "type": "string" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "cashAmountPaidWith": { "type": "number" },
+        "transferProofUrl": { "type": "string" },
+        "status": { "type": "string" },
+        "statusHistory": { "type": "array" },
+        "estimatedDeliveryTime": { "type": "string" },
+        "driverName": { "type": "string" },
+        "driverPhone": { "type": "string" },
+        "orderNotes": { "type": "string" }
+      },
+      "required": ["id", "orderNumber", "createdAt", "customerName", "deliveryType", "items", "total", "status", "paymentMethod"]
+    },
+    "PizzeriaSettings": {
+      "title": "PizzeriaSettings",
+      "description": "Store configuration, opening hours, WhatsApp, bank details, and fees",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "slogan": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "email": { "type": "string" },
+        "cuit": { "type": "string" },
+        "instagram": { "type": "string" },
+        "website": { "type": "string" },
+        "address": { "type": "string" },
+        "city": { "type": "string" },
+        "isOpen": { "type": "boolean" },
+        "bannerMessage": { "type": "string" },
+        "footerText": { "type": "string" },
+        "adminPin": { "type": "string" },
+        "estimatedPrepTimeMinutes": { "type": "number" },
+        "estimatedDeliveryTimeMinutes": { "type": "number" },
+        "deliveryFeeBase": { "type": "number" },
+        "freeDeliveryOver": { "type": "number" },
+        "minimumOrderAmount": { "type": "number" },
+        "bankDetails": { "type": "object" },
+        "acceptCash": { "type": "boolean" },
+        "acceptTransfer": { "type": "boolean" },
+        "acceptMercadoPago": { "type": "boolean" },
+        "acceptCardOnDelivery": { "type": "boolean" },
+        "cashDiscountPercent": { "type": "number" },
+        "openingHours": { "type": "string" }
+      },
+      "required": ["name", "phone", "whatsapp", "isOpen"]
+    },
+    "CustomerUser": {
+      "title": "CustomerUser",
+      "description": "Customer profile and saved delivery addresses",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "savedAddresses": { "type": "array" }
+      },
+      "required": ["id", "name", "phone"]
+    }
+  },
+  "firestore": {
+    "collections": {
+      "products": {
+        "entity": "Product",
+        "description": "Menu products for the pizzeria"
+      },
+      "orders": {
+        "entity": "Order",
+        "description": "Orders placed by customers"
+      },
+      "settings": {
+        "entity": "PizzeriaSettings",
+        "description": "Store configuration document"
+      },
+      "customers": {
+        "entity": "CustomerUser",
+        "description": "Registered customers and address book"
+      }
+    }
+  }
+}
