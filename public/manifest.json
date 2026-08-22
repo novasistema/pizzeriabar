@@ -1,0 +1,24 @@
+{
+  "name": "ChatBotPro — Pedidos Bruzzone128",
+  "short_name": "Bruzzone128",
+  "description": "Monitoreo de pedidos en vivo, Chatbot y POS para Pizzería Bruzzone 128",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0c14",
+  "theme_color": "#ea580c",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=192&auto=format&fit=crop&q=80",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=512&auto=format&fit=crop&q=80",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "name": "Rock 'N' Crust - Vinyl Pizza Bar & Gestión",
-  "description": "Pizzería temática de Rock and Roll con vinilos clásicos, carta digital interactiva, tocadiscos, seguimiento de pedidos, comandas de salón para mozos y panel de gestión de cocina.",
+  "name": "Sistema Pizzería Bruzzone",
+  "description": "Sistema integral de gestión para pizzería con panel de control, punto de venta, KDS, pedidos, inventario y chatbot.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
