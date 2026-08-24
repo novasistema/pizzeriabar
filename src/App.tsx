@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Sidebar } from './components/Sidebar';
 import { DashboardView } from './components/DashboardView';
@@ -17,6 +17,7 @@ import { SalesAndReportsView } from './components/SalesAndReportsView';
 import { EmployeesView } from './components/EmployeesView';
 import { LiveOrdersPWAView } from './components/LiveOrdersPWAView';
 import { BusinessSettingsView } from './components/BusinessSettingsView';
+import { InstructionsView } from './components/InstructionsView';
 import { Header } from './components/Header';
 import { ChatbotSimulatorModal } from './components/ChatbotSimulatorModal';
 import { TimeConfigModal } from './components/TimeConfigModal';
@@ -26,6 +27,10 @@ import { Menu, Sparkles, RotateCcw, PlusCircle } from 'lucide-react';
 const MainLayout: React.FC = () => {
   const { activeTab, orders, loadSampleOrders, clearAllOrders, simulateChatbotOrder } = useApp();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Sistema pedidos - Pro';
+  }, []);
 
   // Render current view
   const renderContent = () => {
@@ -71,7 +76,7 @@ const MainLayout: React.FC = () => {
       case 'pedidos-vivo':
         return <LiveOrdersPWAView />;
       case 'instrucciones':
-        return <BusinessSettingsView type="instrucciones" />;
+        return <InstructionsView />;
       default:
         return <DashboardView />;
     }

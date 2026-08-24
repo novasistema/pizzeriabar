@@ -19,14 +19,20 @@ export const initialBusinessConfig: BusinessConfig = {
   cashierBoxes: [],
   deliveryPayments: {
     efectivo: true,
-    transferencia: false,
+    transferencia: true,
     tarjeta: false,
   },
   pickupPayments: {
     efectivo: true,
-    transferencia: false,
+    transferencia: true,
     tarjeta: false,
   },
+  paymentAlias: 'bruzzone128.mp',
+  cbuCvu: '0000003100012345678901',
+  bankName: 'Mercado Pago / Banco Galicia',
+  accountHolder: 'Pizzería Bruzzone 128',
+  cuitCuil: '30-71234567-8',
+  transferInstructions: 'Envía el comprobante por este chat para confirmar y enviar tu pedido a cocina 🍕',
   businessModel: 'restaurante',
   integrateChatbotToPos: false,
   printerConfig: {

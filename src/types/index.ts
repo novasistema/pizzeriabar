@@ -175,6 +175,14 @@ export interface BusinessConfig {
     tarjeta: boolean;
   };
 
+  // Datos de Transferencia / Alias de Pago
+  paymentAlias?: string;
+  cbuCvu?: string;
+  bankName?: string;
+  accountHolder?: string;
+  cuitCuil?: string;
+  transferInstructions?: string;
+
   // Modelo de negocio
   businessModel?: string;
 

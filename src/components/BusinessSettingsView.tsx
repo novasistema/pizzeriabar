@@ -34,10 +34,13 @@ import {
   Receipt,
   BadgeCheck,
   BookOpen,
+  Phone,
+  MessageCircle,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Branch, CashierBox } from '../types';
 import { TopHeaderWidget } from './TopHeaderWidget';
+import { InstructionsView } from './InstructionsView';
 
 export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripciones' | 'instrucciones' }> = ({
   type = 'mi-negocio',
@@ -46,6 +49,7 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
 
   // Local state initialized with context
   const [businessName, setBusinessName] = useState(businessConfig.name || 'Bruzzone128');
+  const [phone, setPhone] = useState(businessConfig.phone || '+54 9 11 4890-1280');
   const [logoFile, setLogoFile] = useState<string | null>(businessConfig.logoUrl || null);
   const [brandColor, setBrandColor] = useState(businessConfig.brandColor || '#ea580c');
   const [customColor, setCustomColor] = useState('#f97316');
@@ -53,12 +57,19 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
   // Keep local states synced with businessConfig updates from Firestore
   useEffect(() => {
     if (businessConfig.name) setBusinessName(businessConfig.name);
+    if (businessConfig.phone) setPhone(businessConfig.phone);
     if (businessConfig.logoUrl !== undefined) setLogoFile(businessConfig.logoUrl);
     if (businessConfig.brandColor) setBrandColor(businessConfig.brandColor);
     if (businessConfig.address) setAddress(businessConfig.address);
     if (businessConfig.scheduleText) setScheduleText(businessConfig.scheduleText);
     if (businessConfig.currency) setCurrency(businessConfig.currency);
     if (businessConfig.timezone) setTimezone(businessConfig.timezone);
+    if (businessConfig.paymentAlias !== undefined) setPaymentAlias(businessConfig.paymentAlias);
+    if (businessConfig.cbuCvu !== undefined) setCbuCvu(businessConfig.cbuCvu);
+    if (businessConfig.bankName !== undefined) setBankName(businessConfig.bankName);
+    if (businessConfig.accountHolder !== undefined) setAccountHolder(businessConfig.accountHolder);
+    if (businessConfig.cuitCuil !== undefined) setCuitCuil(businessConfig.cuitCuil);
+    if (businessConfig.transferInstructions !== undefined) setTransferInstructions(businessConfig.transferInstructions);
   }, [businessConfig]);
 
   // Address & Hours
@@ -67,12 +78,23 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
   const [currency, setCurrency] = useState(businessConfig.currency || 'ARS');
   const [timezone, setTimezone] = useState(businessConfig.timezone || 'America/Argentina/Buenos_Aires');
 
+  // Datos Bancarios y Alias para el Chatbot
+  const [paymentAlias, setPaymentAlias] = useState(businessConfig.paymentAlias || 'bruzzone128.mp');
+  const [cbuCvu, setCbuCvu] = useState(businessConfig.cbuCvu || '0000003100012345678901');
+  const [bankName, setBankName] = useState(businessConfig.bankName || 'Mercado Pago / Banco Galicia');
+  const [accountHolder, setAccountHolder] = useState(businessConfig.accountHolder || 'Pizzería Bruzzone 128');
+  const [cuitCuil, setCuitCuil] = useState(businessConfig.cuitCuil || '30-71234567-8');
+  const [transferInstructions, setTransferInstructions] = useState(
+    businessConfig.transferInstructions ||
+      'Envía el comprobante por este chat para confirmar y enviar tu pedido a cocina 🍕'
+  );
+
   // Chatbot Payment Methods
   const [deliveryPayments, setDeliveryPayments] = useState(
-    businessConfig.deliveryPayments || { efectivo: true, transferencia: false, tarjeta: false }
+    businessConfig.deliveryPayments || { efectivo: true, transferencia: true, tarjeta: false }
   );
   const [pickupPayments, setPickupPayments] = useState(
-    businessConfig.pickupPayments || { efectivo: true, transferencia: false, tarjeta: false }
+    businessConfig.pickupPayments || { efectivo: true, transferencia: true, tarjeta: false }
   );
 
   // POS Integration
@@ -224,6 +246,7 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
   const handleSaveIdentity = () => {
     updateBusinessConfig({
       name: businessName,
+      phone: phone.trim(),
       logoUrl: logoFile || '',
       brandColor,
     });
@@ -233,14 +256,21 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
   const handleSaveHoursAndPayments = () => {
     updateBusinessConfig({
       address,
+      phone: phone.trim(),
       scheduleText,
       currency,
       timezone,
+      paymentAlias: paymentAlias.trim(),
+      cbuCvu: cbuCvu.trim(),
+      bankName: bankName.trim(),
+      accountHolder: accountHolder.trim(),
+      cuitCuil: cuitCuil.trim(),
+      transferInstructions: transferInstructions.trim(),
       deliveryPayments,
       pickupPayments,
       integrateChatbotToPos,
     });
-    showToast('Horarios, cuentas y medios de pago guardados');
+    showToast('Horarios, datos de transferencia y medios de pago guardados');
   };
 
   const handleSaveBusinessModel = () => {
@@ -529,6 +559,36 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Teléfono / WhatsApp del Chatbot */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  Número de Teléfono / WhatsApp del Chatbot
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsChatbotModalOpen(true)}
+                  className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 cursor-pointer"
+                >
+                  <MessageCircle className="w-3 h-3" />
+                  Ver en Chatbot
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Ej: +54 9 11 4890-1280"
+                  className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
+                />
+              </div>
+              <p className="text-[10px] text-slate-400">
+                Este número se usa en los enlaces <code className="font-mono text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">wa.me</code>, códigos QR y atención automática de tus clientes por WhatsApp.
+              </p>
             </div>
 
             {/* Color de tu marca */}
@@ -846,6 +906,21 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
               />
             </div>
 
+            {/* Teléfono / WhatsApp */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-slate-400" />
+                Teléfono / WhatsApp de atención
+              </label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Ej: +54 9 11 4890-1280"
+                className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition"
+              />
+            </div>
+
             {/* Moneda */}
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
@@ -893,9 +968,19 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
 
             {/* Medios de pago en chatbot */}
             <div className="space-y-4 pt-1 border-t border-slate-100">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                <CreditCard className="w-3.5 h-3.5 text-slate-400" />
-                Medios de pago en chatbot
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                  <CreditCard className="w-3.5 h-3.5 text-slate-400" />
+                  Medios de pago habilitados en Chatbot
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsChatbotModalOpen(true)}
+                  className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 cursor-pointer"
+                >
+                  <MessageCircle className="w-3 h-3" />
+                  Probar en Chatbot
+                </button>
               </div>
 
               {/* Sub-block: Servicio a domicilio */}
@@ -938,7 +1023,7 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
                       }
                       className="rounded text-orange-600 focus:ring-orange-500"
                     />
-                    <span>🏛️ Transferencia</span>
+                    <span>🏛️ Transferencia / Alias</span>
                   </label>
 
                   <label
@@ -965,7 +1050,7 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
               <div className="space-y-2">
                 <span className="text-[11px] font-bold text-slate-600 flex items-center gap-1">
                   <Store className="w-3 h-3 text-orange-500" />
-                  Sucursal y modalidades personalizadas
+                  Retiro en sucursal / Salón
                 </span>
                 <div className="grid grid-cols-3 gap-2">
                   <label
@@ -1001,7 +1086,7 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
                       }
                       className="rounded text-orange-600 focus:ring-orange-500"
                     />
-                    <span>🏛️ Transferencia</span>
+                    <span>🏛️ Transferencia / Alias</span>
                   </label>
 
                   <label
@@ -1024,6 +1109,168 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
                 </div>
               </div>
 
+              {/* DEDICATED SECTION: Datos Bancarios y Alias de Transferencia */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-slate-800 text-white space-y-3.5 shadow-lg">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                      🏛️
+                    </div>
+                    <div>
+                      <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+                        Configuración de Alias & Transferencia Bancaria
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+                          CHATBOT ACTIVO
+                        </span>
+                      </h3>
+                      <p className="text-[10px] text-slate-400">
+                        El chatbot enviará estos datos automáticamente cuando el cliente elija pagar por Transferencia o Alias.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                  {/* Alias */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-emerald-400 flex items-center justify-between">
+                      <span>Alias de Pago (CBU/CVU/Mercado Pago) *</span>
+                      <span className="text-[9px] text-slate-400 font-mono">Toca para copiar en WhatsApp</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentAlias}
+                      onChange={(e) => setPaymentAlias(e.target.value)}
+                      placeholder="Ej: bruzzone128.mp o mi-negocio.uala"
+                      className="w-full text-xs font-mono font-bold px-3 py-2 rounded-xl bg-slate-800/90 border border-emerald-500/50 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500"
+                    />
+                  </div>
+
+                  {/* Banco o Billetera */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-300">
+                      Banco / Billetera Virtual *
+                    </label>
+                    <input
+                      type="text"
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      placeholder="Ej: Mercado Pago / Banco Galicia / Cuenta DNI"
+                      className="w-full text-xs px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                    />
+                  </div>
+
+                  {/* Titular */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-300">
+                      Titular de la Cuenta
+                    </label>
+                    <input
+                      type="text"
+                      value={accountHolder}
+                      onChange={(e) => setAccountHolder(e.target.value)}
+                      placeholder="Ej: Pizzería Bruzzone 128 / Juan Pérez"
+                      className="w-full text-xs px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                    />
+                  </div>
+
+                  {/* CBU / CVU */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-300">
+                      CBU / CVU (22 dígitos)
+                    </label>
+                    <input
+                      type="text"
+                      value={cbuCvu}
+                      onChange={(e) => setCbuCvu(e.target.value)}
+                      placeholder="Ej: 0000003100012345678901"
+                      className="w-full text-xs font-mono px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                    />
+                  </div>
+
+                  {/* CUIT / CUIL */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-300">
+                      CUIT / CUIL
+                    </label>
+                    <input
+                      type="text"
+                      value={cuitCuil}
+                      onChange={(e) => setCuitCuil(e.target.value)}
+                      placeholder="Ej: 30-71234567-8"
+                      className="w-full text-xs font-mono px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                    />
+                  </div>
+
+                  {/* Instrucciones */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-slate-300">
+                      Instrucciones para el comprobante
+                    </label>
+                    <input
+                      type="text"
+                      value={transferInstructions}
+                      onChange={(e) => setTransferInstructions(e.target.value)}
+                      placeholder="Ej: Envía el comprobante por este chat para comenzar a cocinar"
+                      className="w-full text-xs px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Live Chatbot WhatsApp Preview of Transfer Info */}
+                <div className="p-3 bg-[#111b21] rounded-xl border border-slate-800 space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                    <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                      <MessageCircle className="w-3 h-3" />
+                      Vista previa del mensaje que enviará el Chatbot:
+                    </span>
+                    <span>WhatsApp Formatted</span>
+                  </div>
+
+                  <div className="bg-[#202c33] p-3 rounded-2xl border border-slate-700 text-slate-100 text-xs font-sans space-y-1.5 shadow-inner">
+                    <div className="font-bold text-emerald-400">
+                      🏛️ *DATOS PARA TRANSFERENCIA BANCARIA* 🏛️
+                    </div>
+                    <div className="space-y-0.5 text-[11px] text-slate-200">
+                      <div>
+                        • <span className="font-semibold">Alias:</span>{' '}
+                        <code className="bg-slate-900 px-1.5 py-0.5 rounded font-mono font-bold text-emerald-300 border border-emerald-500/30">
+                          {paymentAlias || 'bruzzone128.mp'}
+                        </code>
+                      </div>
+                      {bankName && (
+                        <div>
+                          • <span className="font-semibold">Banco / Billetera:</span> {bankName}
+                        </div>
+                      )}
+                      {accountHolder && (
+                        <div>
+                          • <span className="font-semibold">Titular:</span> {accountHolder}
+                        </div>
+                      )}
+                      {cbuCvu && (
+                        <div>
+                          • <span className="font-semibold">CBU / CVU:</span>{' '}
+                          <span className="font-mono text-slate-300">{cbuCvu}</span>
+                        </div>
+                      )}
+                      {cuitCuil && (
+                        <div>
+                          • <span className="font-semibold">CUIT/CUIL:</span>{' '}
+                          <span className="font-mono text-slate-300">{cuitCuil}</span>
+                        </div>
+                      )}
+                      <div className="text-amber-300 font-semibold pt-1">
+                        • <span className="font-semibold">Monto exacto a transferir:</span> $15.800
+                      </div>
+                    </div>
+                    <div className="text-[10px] text-slate-300 italic pt-1 border-t border-slate-700/60">
+                      📸 {transferInstructions || 'Envía el comprobante por este chat para confirmar y enviar tu pedido a cocina.'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Save Payments Button */}
               <div className="pt-2">
                 <button
@@ -1032,13 +1279,13 @@ export const BusinessSettingsView: React.FC<{ type?: 'mi-negocio' | 'suscripcion
                   className="px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 flex items-center gap-2 transition cursor-pointer active:scale-95"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  Guardar cuentas y medios de pago
+                  Guardar alias, cuentas y medios de pago
                 </button>
               </div>
 
               <p className="text-[10px] text-slate-400">
-                Guarda aquí los cambios realizados en tus cuentas bancarias y métodos de pago. El chatbot mostrará
-                solo estas opciones al cliente según el tipo de entrega que elija.
+                Guarda aquí los cambios realizados en tus cuentas bancarias y alias de pago. El chatbot mostrará
+                los datos configurados en tiempo real al cliente.
               </p>
             </div>
 
